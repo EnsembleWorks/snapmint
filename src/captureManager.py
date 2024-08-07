@@ -23,7 +23,7 @@ class CaptureManager:
         # Check if the camera opened successfully
         if not cap.isOpened():
             print("Error: Could not open video device")
-            return
+            cap = cv2.VideoCapture("./assets/sketch-sample.mp4")
 
         # Set the resolution and frame rate
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, captureWidth)
