@@ -5,6 +5,7 @@ import cv2
 from colors import Colors
 from firebase_admin import storage
 from concurrent.futures import ThreadPoolExecutor
+from configuration import Configuration
 
 
 class OutputManager:
@@ -14,7 +15,7 @@ class OutputManager:
         self.checkpointFrequency = checkpointFrequency
         self.shutdownEvent = shutdownEvent
         self.executor = ThreadPoolExecutor()
-        self.bucket = storage.bucket()
+        self.bucket = storage.bucket(Configuration.STORAGE_URL)
 
     async def write_frame_to_disk(self, frame, captureTime):
         filename = os.path.join(self.sessionTitle, f"{captureTime}.jpg")
