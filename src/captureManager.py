@@ -2,6 +2,7 @@ import time
 import asyncio
 import cv2
 import numpy as np
+import random
 from datetime import datetime
 
 
@@ -54,9 +55,18 @@ class CaptureManager:
         return int(time.time())
 
     def mock_read(self):
+        colors = [
+            (50, 50, 50),  # Dark grey
+            (30, 30, 30),  # Darker grey
+            (10, 10, 10),  # Even darker grey
+            (100, 0, 0),  # Dark blue
+            (70, 0, 0),  # Darker blue
+            (40, 0, 0),  # Even darker blue
+        ]
         # Create a blank black image
         height, width = 2160, 3840  # You can adjust these dimensions to your needs
-        frame = np.zeros((height, width, 3), dtype=np.uint8)
+        background_color = random.choice(colors)
+        frame = np.full((height, width, 3), background_color, dtype=np.uint8)
 
         # Get current timestamp
         timestamp1 = datetime.now().strftime("%Y-%m-%d")
