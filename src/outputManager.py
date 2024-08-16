@@ -14,6 +14,7 @@ class OutputManager:
         self.sessionTitle = sessionTitle
         self.checkpointFrequency = checkpointFrequency
         self.shutdownEvent = shutdownEvent
+        self.uploaded_timestamps = set()
         self.executor = ThreadPoolExecutor()
         self.bucket = storage.bucket(Configuration.STORAGE_URL)
 
@@ -45,9 +46,7 @@ class OutputManager:
                 encoded_image.tobytes(),
                 "image/jpeg",
             )
-            print(
-                f"{Colors.GREEN}Frame uploaded\t{captureTime}{Colors.END}"
-            )
+            print(f"{Colors.GREEN}Frame uploaded\t{captureTime}{Colors.END}")
         except Exception as e:
             print(
                 f"{Colors.RED}FAILED TO UPLOAD TO CLOUD STORAGE:\t{filename}{Colors.END}"
@@ -70,8 +69,17 @@ class OutputManager:
         print(
             f"{Colors.YELLOW}Searching for frame:\t{targetTimestamp}\tFound frame: {captureTime}\tLatency: {latencyColor}{latency}{Colors.END}"
         )
-        if frame is not None:
-            await self.write_frame_to_disk(frame, captureTime)
-            await self.upload_frame_to_storage(frame, captureTime)
-            return captureTime
-        return None
+        if captureTime not in self.uploaded_timestamps:
+            if frame is not None:
+                try:
+                    self.uploaded_timestamps.add(captureTime)
+                    await self.write_frame_to_disk(frame, captureTime)
+                    await self.upload_frame_to_storage(frame, captureTime)
+                except:
+                    self.uploaded_timestamps.remove(captureTime)
+                    return None
+            else:
+                return None
+        else:
+            print(f"{Colors.YELLOW}Frame already uploaded:\t{captureTime}{Colors.END}")
+        return captureTime
