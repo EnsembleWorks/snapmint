@@ -7,6 +7,11 @@ pip install opencv-python-headless janus aiofiles google-cloud-storage firebase-
 
 gcloud auth application-default login
 
+gcloud projects list
+gcloud config set project $MY_PROJECT_ID
+
+SEE configuration.py
+
 https://cloud.google.com/sdk/docs/install
 https://cloud.google.com/storage/docs/uploading-objects-from-memory
 https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-python

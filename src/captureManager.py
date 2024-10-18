@@ -1,3 +1,4 @@
+from configuration import Configuration
 import time
 import asyncio
 import cv2
@@ -112,10 +113,23 @@ class CaptureManager:
         return True, frame
 
     def perform_capture(self):
-        # ret, frame = self.cap.read()
-        ret, frame = self.mock_read()
+        # Capture the frame via camera or mock
+        ret, frame = self.mock_read() if Configuration.IS_MOCK else self.cap.read()
 
-        # print(".", end="", flush=True)
+        # Rotate the frame based on the configuration
+        if Configuration.CAPTURE_ROTATION == 90:
+            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+        elif Configuration.CAPTURE_ROTATION == 180:
+            frame = cv2.rotate(frame, cv2.ROTATE_180)
+        elif Configuration.CAPTURE_ROTATION == 270:
+            frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+        # Flip the frame horizontally or vertically based on the configuration
+        if Configuration.CAPTURE_FLIP_HORIZONTAL:
+            frame = cv2.flip(frame, 1)  # 1 flips horizontally
+        if Configuration.CAPTURE_FLIP_VERTICAL:
+            frame = cv2.flip(frame, 0)  # 0 flips vertically
+
         captureTime = self.get_current_unix_time()
         if ret:
             return frame, captureTime

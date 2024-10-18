@@ -2,55 +2,45 @@ from bufferManager import BufferManager
 from captureManager import CaptureManager
 from outputManager import OutputManager
 from subscriptionManager import SubscriptionManager
+from configuration import Configuration
 import asyncio
 from datetime import datetime
 import os
 import firebase_admin
-
-
-CAPTURE_WIDTH = 3840
-CAPTURE_HEIGHT = 2160
-CAPTURE_FPS = 30
-CAMERA_INDEX = 0
-CAPTURE_FREQUENCY = 1
-CHECKPOINT_FREQUENCY = 100
-BATCH_FREQUENCY = 5
-BUFFER_SIZE = 150
-CONTRACT_ADDRESS = "0xfd6f6371647673fcf4107e57f955edb79b80e644"
 
 def get_current_iso_time():
     return datetime.now().isoformat()
 
 async def main():
     print(
-        f"Starting the program with Configuration: WIDTH={CAPTURE_WIDTH}, HEIGHT={CAPTURE_HEIGHT}, FPS={CAPTURE_FPS}"
+        f"Starting the program with Configuration: WIDTH={Configuration.CAPTURE_WIDTH}, HEIGHT={Configuration.CAPTURE_HEIGHT}, FPS={Configuration.CAPTURE_FPS}"
     )
     firebase_admin.initialize_app()
     shutdownEvent = asyncio.Event()
-    sessionTitle = CONTRACT_ADDRESS
+    sessionTitle = Configuration.CONTRACT_ADDRESS
     if not os.path.exists(sessionTitle):
         os.makedirs(sessionTitle)
     
-    buffer = BufferManager(maxsize=BUFFER_SIZE)
+    buffer = BufferManager(maxsize=Configuration.BUFFER_SIZE)
     capture = CaptureManager(
         buffer,
         sessionTitle,
-        CAPTURE_FREQUENCY,
-        CAMERA_INDEX,
-        CAPTURE_WIDTH,
-        CAPTURE_HEIGHT,
-        CAPTURE_FPS,
+        Configuration.CAPTURE_FREQUENCY,
+        Configuration.CAMERA_INDEX,
+        Configuration.CAPTURE_WIDTH,
+        Configuration.CAPTURE_HEIGHT,
+        Configuration.CAPTURE_FPS,
         shutdownEvent,
     )
     output = OutputManager(
         buffer,
         sessionTitle,
-        CHECKPOINT_FREQUENCY,
+        Configuration.CHECKPOINT_FREQUENCY,
         shutdownEvent,
     )
     subscription = SubscriptionManager(
         output.save_frame_at_timestamp,
-        BATCH_FREQUENCY,
+        Configuration.BATCH_FREQUENCY,
         shutdownEvent,
     )
 
