@@ -2,7 +2,6 @@ import asyncio
 from firebase_admin import firestore_async as firestore
 
 
-
 # Define the transaction function outside the class
 @firestore.async_transactional
 async def process_job(transaction, job_ref, onFrameRequest):

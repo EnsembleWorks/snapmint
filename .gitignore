@@ -161,5 +161,4 @@ cython_debug/
 
 # misc
 .ds_store
-configuration.py
 0x*

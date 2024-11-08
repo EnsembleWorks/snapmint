@@ -65,7 +65,7 @@ class CaptureManager:
             (40, 0, 0),  # Even darker blue
         ]
         # Create a blank black image
-        height, width = 2160, 3840  # You can adjust these dimensions to your needs
+        height, width = 2160, 3840
         background_color = random.choice(colors)
         frame = np.full((height, width, 3), background_color, dtype=np.uint8)
 
